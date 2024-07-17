@@ -9,7 +9,7 @@
     <nav class="content">
         <h2>Events</h2>
         <div class="form-container">
-            <form action="submit_event.php" method="POST" enctype="multipart/form-data">
+            <form action="../admin/eventsmanagement/submitevent.php" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="eventName">Event Name:</label>
                     <input type="text" id="eventName" name="eventName" required>

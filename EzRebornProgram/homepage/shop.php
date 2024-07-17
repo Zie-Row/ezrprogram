@@ -104,10 +104,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
             <ul>
                 <li><a href="home.php">Home</a></li>
                 <li class="current"><a href="shop.php">Shop</a></li>
+                <li><a href="schedule.php">Events</a></li>
                 <li><a href="about.php">About Us</a></li>
-                <li><a href="contact.php">Contact</a></li>
                 <li><a href="cart.php">Cart</a></li>
-                <li><a href="logout.php">Log Out</a></li>
+                <li><a href="../LogReg/logout.php">Log Out</a></li>
             </ul>
         </nav>
     </header>

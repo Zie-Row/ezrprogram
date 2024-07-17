@@ -82,10 +82,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <ul>
                 <li><a href="home.php">Home</a></li>
                 <li><a href="shop.php">Shop</a></li>
+                <li><a href="schedule.php">Shop</a></li>
                 <li><a href="about.php">About Us</a></li>
-                <li><a href="contact.php">Contact</a></li>
                 <li class="current"><a href="cart.php">Cart</a></li>
-                <li><a href="logout.php">Log Out</a></li>
+                <li><a href="../LogReg/logout.php">Log Out</a></li>
             </ul>
         </nav>
     </header>
