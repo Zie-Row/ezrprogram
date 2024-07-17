@@ -50,14 +50,12 @@ session_start();
         <section class="featured-products">
             <h2>Featured Products</h2>
             <div class="product-grid">
-                <!-- Example Product -->
                 <div class="product-card">
                     <img src="img/product1.jpg" alt="Product 1">
                     <h3>Product 1</h3>
                     <p>Php200.99</p>
                     <button>Add to Cart</button>
                 </div>
-                <!-- Add more product cards as needed -->
             </div>
         </section>
 
@@ -81,14 +79,6 @@ session_start();
         </section>
     </main>
 
-    <footer>
-        <p>&copy; 2024 EZReborn E-Sports. All rights reserved.</p>
-        <ul>
-            <li><a href="privacy.php">Privacy Policy</a></li>
-            <li><a href="terms.php">Terms of Service</a></li>
-        </ul>
-    </footer>
-   
     <script>
         
         const slides = document.querySelector('.slides');

@@ -24,7 +24,7 @@ if (isset($_GET['id'])) {
     $sql = "UPDATE users SET fname='$fname', lname='$lname', phonenum='$phonenum', email='$email', userpass='$userpass' WHERE id=$id";
     if ($conn->query($sql) === TRUE) {
         echo "User updated successfully";
-        header('Location: users.php');
+        header('Location: home.php');
     } else {
         echo "Error updating user: " . $conn->error;
     }

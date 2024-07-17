@@ -1,26 +1,30 @@
 <?php
 session_start();
+include ('../LogReg/database.php');
 
-// Example cart data (in a real application, this would be fetched from a database)
+// Fetch all products from the database
+$sql = "SELECT id, name, price, imagePath FROM product";
+$result = $conn->query($sql);
+
+$products = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $products[$row['id']] = [
+            'name' => $row['name'],
+            'price' => $row['price'],
+            'image' => '../admin/' . $row['imagePath']
+        ];
+    }
+}
+
 $cart = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
 
-// Example products (in a real application, this would be fetched from a database)
-$products = [
-    1 => ['name' => 'Gaming Mouse', 'price' => 49.99, 'image' => 'img/product1.jpg'],
-    2 => ['name' => 'Mechanical Keyboard', 'price' => 99.99, 'image' => 'img/product2.jpg'],
-    3 => ['name' => 'Gaming Headset', 'price' => 79.99, 'image' => 'img/product3.jpg'],
-    4 => ['name' => 'Gaming Chair', 'price' => 199.99, 'image' => 'img/product4.jpg'],
-];
-
-// Calculate total price
 $total = 0;
 foreach ($cart as $product_id => $quantity) {
     $total += $products[$product_id]['price'] * $quantity;
 }
 
-// Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Update cart quantities
     if (isset($_POST['update_cart'])) {
         foreach ($_POST['quantities'] as $product_id => $quantity) {
             if ($quantity <= 0) {
@@ -34,11 +38,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // Handle payment
     if (isset($_POST['pay'])) {
         $payment_method = $_POST['payment_method'];
-        // Redirect to payment gateway or handle payment processing here
-        // For demonstration, we will just display a success message
+        $email = $_SESSION['email']; 
+        $order_date = date('Y-m-d H:i:s'); 
+        foreach ($cart as $product_id => $quantity) {
+            $product_name = $products[$product_id]['name'];
+            $price = $products[$product_id]['price'];
+            $sql = "INSERT INTO orders (email, product_name, quantity, price, order_date) VALUES ('$email', '$product_name', $quantity, $price, '$order_date')";
+            $conn->query($sql);
+        }
+    
         echo "<script>alert('Payment successful using $payment_method!');</script>";
         $cart = [];
         $_SESSION['cart'] = $cart;
@@ -82,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <ul>
                 <li><a href="home.php">Home</a></li>
                 <li><a href="shop.php">Shop</a></li>
-                <li><a href="schedule.php">Shop</a></li>
+                <li><a href="schedule.php">Events</a></li>
                 <li><a href="about.php">About Us</a></li>
                 <li class="current"><a href="cart.php">Cart</a></li>
                 <li><a href="../LogReg/logout.php">Log Out</a></li>
@@ -98,14 +108,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php else : ?>
                 <?php foreach ($cart as $product_id => $quantity) : ?>
                     <div class="cart-item">
-                        <img src="<?php echo $products[$product_id]['image']; ?>" alt="<?php echo $products[$product_id]['name']; ?>">
+                        <img src="<?php echo htmlspecialchars($products[$product_id]['image']); ?>" alt="<?php echo htmlspecialchars($products[$product_id]['name']); ?>">
                         <span><?php echo htmlspecialchars($products[$product_id]['name']); ?></span>
-                        <span>$<?php echo number_format($products[$product_id]['price'], 2); ?></span>
+                        <span>₱<?php echo number_format($products[$product_id]['price'], 2); ?></span>
                         <input type="number" name="quantities[<?php echo $product_id; ?>]" value="<?php echo $quantity; ?>" min="0">
                     </div>
                 <?php endforeach; ?>
                 <div class="cart-total">
-                    Total: $<?php echo number_format($total, 2); ?>
+                    Total: ₱<?php echo number_format($total, 2); ?>
                 </div>
                 <button type="submit" name="update_cart">Update Cart</button>
             <?php endif; ?>
@@ -124,13 +134,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php endif; ?>
     </main>
-
-    <footer>
-        <p>&copy; 2024 EZReborn E-Sports. All rights reserved.</p>
-        <ul>
-            <li><a href="privacy.php">Privacy Policy</a></li>
-            <li><a href="terms.php">Terms of Service</a></li>
-        </ul>
-    </footer>
 </body>
 </html>
+<?php $conn->close(); ?>

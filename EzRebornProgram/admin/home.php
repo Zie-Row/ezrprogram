@@ -12,11 +12,11 @@
       <li><a href="javascript:void(0)" onclick="loadPage('users')">User Management</a></li>
       <li><a href="javascript:void(0)" onclick="loadPage('events')">Events</a></li>
       <li><a href="javascript:void(0)" onclick="loadPage('products')">Products</a></li>
+      <li><a href="javascript:void(0)" onclick="loadPage('inventory')">Inventory</a></li>
     </ul>
   </nav>
   <div id="content"></div>
   <script>
-    //ajax or something idk
     function loadPage(page) {
       var xhr = new XMLHttpRequest();
       xhr.open('GET', page + '.php', true);

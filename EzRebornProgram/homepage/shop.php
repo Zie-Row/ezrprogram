@@ -1,29 +1,29 @@
 <?php
 session_start();
+include ('../LogReg/database.php');
 
-// Example product data (in a real application, this would be fetched from a database)
-$products = [
-    1 => ['name' => 'Ezr Bomber Jacket', 'price' => 1499.99, 'image' => 'img/product1.jpg', 'category' => 'Clothing'],
-    2 => ['name' => 'Ezr Jersey (Black)', 'price' => 450.99, 'image' => 'img/product2.jpg', 'category' => 'Clothing'],
-    3 => ['name' => 'EZR Jersey', 'price' => 450.99, 'image' => 'img/product3.jpg', 'category' => 'Clothing'],
-    4 => ['name' => '3 in 1 EZR Hoodie', 'price' => 9999.99, 'image' => 'img/product4.jpg', 'category' => 'Bundle'],
-];
+$sql = "SELECT id, name, price, quantity, imagePath, discount FROM product";
+$result = $conn->query($sql);
 
-// Example categories
-$categories = ['All', 'Clothing', 'Bundle'];
+$products = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $products[$row['id']] = [
+            'name' => $row['name'],
+            'price' => $row['price'],
+            'stock' => $row['quantity'],
+            'image' => '../admin/' . $row['imagePath'],
+            'discount' => $row['discount']
+        ];
+    }
+}
 
-// Get selected category and search query from query parameters
-$selected_category = isset($_GET['category']) ? $_GET['category'] : 'All';
 $search_query = isset($_GET['search']) ? strtolower($_GET['search']) : '';
 
-// Filter products by selected category and search query
-$filtered_products = array_filter($products, function($product) use ($selected_category, $search_query) {
-    $in_category = $selected_category === 'All' || $product['category'] === $selected_category;
-    $in_search = empty($search_query) || strpos(strtolower($product['name']), $search_query) !== false;
-    return $in_category && $in_search;
+$filtered_products = array_filter($products, function($product) use ($search_query) {
+    return empty($search_query) || strpos(strtolower($product['name']), $search_query) !== false;
 });
 
-// Handle add to cart form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     $product_id = (int)$_POST['product_id'];
     $quantity = (int)$_POST['quantity'];
@@ -52,25 +52,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     <style>
         .shop-container {
             display: flex;
-        }
-        .categories {
-            width: 20%;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        .categories ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .categories ul li {
-            margin-bottom: 10px;
-        }
-        .categories ul li a {
-            text-decoration: none;
-            color: #333;
+            flex-wrap: wrap;
         }
         .product-grid {
-            width: 80%;
+            width: 100%;
             display: flex;
             flex-wrap: wrap;
             padding: 20px;
@@ -114,30 +99,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
 
     <main>
         <div class="shop-container">
-            <aside class="categories">
-                <h2>Categories</h2>
-                <ul>
-                    <?php foreach ($categories as $category) : ?>
-                        <li>
-                            <a href="shop.php?category=<?php echo urlencode($category); ?>" <?php echo $category === $selected_category ? 'style="font-weight: bold;"' : ''; ?>>
-                                <?php echo htmlspecialchars($category); ?>
-                            </a>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </aside>
             <section class="product-grid">
                 <form class="search-bar" action="shop.php" method="get">
-                    <input type="hidden" name="category" value="<?php echo htmlspecialchars($selected_category); ?>">
                     <input type="text" name="search" placeholder="Search for products..." value="<?php echo htmlspecialchars($search_query); ?>">
                     <button type="submit">Search</button>
                 </form>
                 <?php if (empty($filtered_products)) : ?>
-                    <p>No products found in this category.</p>
+                    <p>No products found.</p>
                 <?php else : ?>
                     <?php foreach ($filtered_products as $product_id => $product) : ?>
                         <div class="product-card">
-                            <img src="<?php echo $product['image']; ?>" alt="<?php echo $product['name']; ?>">
+                            <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
                             <h3><?php echo htmlspecialchars($product['name']); ?></h3>
                             <p>₱<?php echo number_format($product['price'], 2); ?></p>
                             <form action="shop.php" method="post">
@@ -151,13 +123,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
             </section>
         </div>
     </main>
-
-    <footer>
-        <p>&copy; 2024 EZReborn E-Sports. All rights reserved.</p>
-        <ul>
-            <li><a href="privacy.php">Privacy Policy</a></li>
-            <li><a href="terms.php">Terms of Service</a></li>
-        </ul>
-    </footer>
 </body>
 </html>
+<?php $conn->close(); ?>

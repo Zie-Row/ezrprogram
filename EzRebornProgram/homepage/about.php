@@ -17,7 +17,7 @@ session_start();
             <ul>
                 <li><a href="home.php">Home</a></li>
                 <li><a href="shop.php">Shop</a></li>
-                <li><a href="scheduly.php">Events</a></li>
+                <li><a href="schedule.php">Events</a></li>
                 <li class="current"><a href="about.php">About Us</a></li>
                 <li><a href="cart.php">Cart</a></li>
                 <li><a href="../LogReg/logout.php">Log Out</a></li>
@@ -40,12 +40,5 @@ session_start();
         </section>
     </main>
 
-    <footer>
-        <p>&copy; 2024 EZReborn E-Sports. All rights reserved.</p>
-        <ul>
-            <li><a href="privacy.php">Privacy Policy</a></li>
-            <li><a href="terms.php">Terms of Service</a></li>
-        </ul>
-    </footer>
 </body>
 </html>
